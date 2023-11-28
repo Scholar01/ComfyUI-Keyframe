@@ -7,7 +7,7 @@ from comfy.k_diffusion.sampling import to_d, default_noise_sampler
 from .util import print, is_injected_model, get_injected_model, generate_sigmas, generate_noise, get_ancestral_step
 
 CUSTOM_SAMPLERS = [
-    'k_euler', 'k_euler_a'
+    'k_euler', 'k_euler_a', 'k_lcm'
 ]
 
 
@@ -15,6 +15,7 @@ def inject_samples():
     comfy.samplers.SAMPLER_NAMES.extend(CUSTOM_SAMPLERS)
     k_diffusion_sampling.sample_k_euler = sample_k_euler
     k_diffusion_sampling.sample_k_euler_a = sample_k_euler_a
+    k_diffusion_sampling.sample_k_lcm = sample_k_lcm
     print(f'Injected samplers: {CUSTOM_SAMPLERS}')
 
 
@@ -102,3 +103,41 @@ def sample_k_euler_a(model, x, sigmas, extra_args=None, callback=None, disable=N
             if sigma[i + 1] > 0:
                 noise[j] = noise[j] + noise_sampler(sigma[i], sigma[i + 1])[j] * s_noise * sigma_up[j]
     return noise
+
+
+@torch.no_grad()
+def sample_k_lcm(model, x, sigmas, extra_args=None, callback=None, disable=None, noise_sampler=None):
+    
+    model_wrap = model.inner_model
+    real_model = model_wrap.inner_model
+
+    if not is_injected_model(real_model):
+        raise Exception("model is not injected,please use LatentKeyframeApply node to inject model")
+    
+    inject_param = get_injected_model(real_model)
+    latent_image = inject_param.latent['samples']
+
+    sigmas, noise = get_sigmas_noise(model_wrap, x, inject_param.noise, latent_image, sigmas, inject_param.scheduler,
+                                     inject_param.steps, inject_param.keyframe_part_group)
+
+    
+    extra_args = {} if extra_args is None else extra_args
+    noise_sampler = default_noise_sampler(noise) if noise_sampler is None else noise_sampler
+
+    for i in trange(sigmas.shape[1] - 1, disable=disable):
+        # s_in = x.new_ones([x.shape[0]])
+        s_in = sigmas[:, i]
+        denoised = model(noise, s_in, **extra_args)
+        if callback is not None:
+            callback({'x': noise, 'i': i, 'sigma': s_in, 'sigma_hat':s_in, 'denoised': denoised})
+        
+   
+        noise = denoised
+
+        
+        for j, sigma in enumerate(sigmas):
+
+            if sigma[i + 1] > 0:
+                noise[j] = noise[j] + sigma[i + 1] * noise_sampler(sigma[i], sigma[i + 1])[j]
+    return noise
+
