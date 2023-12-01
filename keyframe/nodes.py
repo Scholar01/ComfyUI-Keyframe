@@ -34,6 +34,7 @@ class KeyframePartNode:
     def load_keyframe_part(self, image, batch_index, denoise, part=None):
         if not part:
             part = KeyframePartGroup()
+        part = part.clone()
         keyframe = KeyframePart(batch_index, image, denoise)
         part.add(keyframe)
         return (part,)
@@ -75,6 +76,7 @@ class KeyframeInterpolationPartNode:
 
         if not part:
             part = KeyframePartGroup()
+        part = part.clone()
         current_group = KeyframePartGroup()
 
         steps = batch_index_to - batch_index_from

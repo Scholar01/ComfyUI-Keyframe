@@ -37,6 +37,12 @@ class KeyframePartGroup:
 
     def is_empty(self) -> bool:
         return len(self.keyframes) == 0
+    
+    def clone(self) -> 'KeyframePartGroup':
+        cloned = KeyframePartGroup()
+        for k in self.keyframes:
+            cloned.add(k)
+        return cloned
 
 
 @dataclass
