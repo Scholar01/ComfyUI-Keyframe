@@ -3,10 +3,8 @@ import math
 import torch
 
 from comfy.samplers import calculate_sigmas_scheduler
-from rich.console import Console
 
 KEYFRAME_INJECTED_ATTR = "keyframe_injected"
-console = Console(color_system="truecolor", force_terminal=True)
 
 
 def inject_model(model, inject_param):
@@ -28,9 +26,6 @@ def clear_injected_model(model):
         delattr(model, KEYFRAME_INJECTED_ATTR)
 
 
-def print(msg, *args, **kwargs):
-    msg = f'[bold red]Keyframe[/bold red] [green]{msg}[/green]'
-    console.print(msg)
 
 
 def max_denoise(model_wrap, sigmas):

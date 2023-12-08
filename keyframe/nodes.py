@@ -3,7 +3,7 @@ import numpy as np
 from .interface import KeyframePartGroup, KeyframePart, ModelInjectParam
 from .sampling import keyframe_sample_factory
 
-from .util import inject_model, print
+from .util import inject_model
 from .samples import inject_samples
 import comfy.sample as comfy_sample
 

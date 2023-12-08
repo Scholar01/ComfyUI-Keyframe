@@ -4,7 +4,7 @@ from tqdm.auto import trange
 import comfy.samplers
 from comfy.k_diffusion import sampling as k_diffusion_sampling
 from comfy.k_diffusion.sampling import to_d, default_noise_sampler
-from .util import print, is_injected_model, get_injected_model, generate_sigmas, generate_noise, get_ancestral_step
+from .util import  is_injected_model, get_injected_model, generate_sigmas, generate_noise, get_ancestral_step
 
 CUSTOM_SAMPLERS = [
     'k_euler', 'k_euler_a', 'k_lcm'

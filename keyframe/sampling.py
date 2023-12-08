@@ -1,7 +1,7 @@
 from typing import Callable
 
 from comfy.model_patcher import ModelPatcher
-from .util import is_injected_model, print, get_injected_model
+from .util import is_injected_model, get_injected_model
 
 
 def keyframe_sample_factory(orig_comfy_sample: Callable) -> Callable:
