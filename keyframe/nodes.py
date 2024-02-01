@@ -140,7 +140,7 @@ class KeyframeApplyNode:
     def apply_latent_keyframe(self, model, latent, part_group: KeyframePartGroup, vae):
         # 预处理latent,把图片替换进去
         for part in part_group.keyframes:
-            latent['samples'][part.batch_index] = self.encode(vae, part.image)
+            latent['samples'][part.batch_index] = self.encode(vae, part.image)[part.batch_index]
             print(f"apply keyframe {part.batch_index}:{part.denoise}")
 
         # 注入参数,后续处理
