@@ -1,0 +1,14 @@
+[project]
+name = "comfyui-keyframe"
+description = "Nodes:Keyframe Part, Keyframe Interpolation Part, Keyframe Apply."
+version = "1.0.0"
+license = "LICENSE"
+
+[project.urls]
+Repository = "https://github.com/Scholar01/ComfyUI-Keyframe"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-Keyframe"
+Icon = ""
