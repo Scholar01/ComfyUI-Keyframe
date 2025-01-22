@@ -2,7 +2,7 @@ import math
 
 import torch
 
-from comfy.samplers import calculate_sigmas_scheduler
+from comfy.samplers import calculate_sigmas
 
 KEYFRAME_INJECTED_ATTR = "keyframe_injected"
 
@@ -40,10 +40,10 @@ def generate_sigmas(real_model, x, origin_sigmas, scheduler, steps, part_group, 
 
     for part in part_group:
         if part.denoise is None or part.denoise > 0.9999:
-            new_sigmas[part.batch_index] = calculate_sigmas_scheduler(real_model, scheduler, steps).to(device)
+            new_sigmas[part.batch_index] = calculate_sigmas(real_model, scheduler, steps).to(device)
         else:
             new_steps = int(steps / part.denoise)
-            sigmas = calculate_sigmas_scheduler(real_model, scheduler, new_steps).to(device)
+            sigmas = calculate_sigmas(real_model, scheduler, new_steps).to(device)
             new_sigmas[part.batch_index] = sigmas[-(steps + 1):]
     return new_sigmas
 
